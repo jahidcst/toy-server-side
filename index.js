@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 7000;
 
@@ -57,15 +57,29 @@ async function run() {
         })
         // delete from toyDB
         app.delete('/allToys/:id', async(req, res) =>{
+          try{
             const id = req.params.id;
             const query = {_id: new ObjectId(id)}
             const result = await toyCollection.deleteOne(query)
             res.send(result)
+          }
+          catch(err){
+            res.send(err.massge)
+          }
         });
 
         // patch to toyDB
         app.patch('/allToys/:id', async(req, res) =>{
             const id = res.params.id
+            const updatedToyData = req.body
+            const filter = {_id : new ObjectId(id)}
+            const updateDoc = {
+                $set: {
+                    ...updatedToyData
+                }
+            }
+            const result = await toyCollection.updateOne(filter, updateDoc)
+            res.send(result)
         })
 
 
