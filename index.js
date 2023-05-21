@@ -84,14 +84,18 @@ async function run() {
             }
         });
 
+        // app.put('/allToys/:id', async(req, res) => {
+        //     const updated
+        // })
+
         // patch to toyDB
         app.patch('/allToys/:id', async (req, res) => {
-            const id = res.params.id
-            const updatedToyData = req.body
+            const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
+            const updatedToyData = req.body;
             const updateDoc = {
                 $set: {
-                    ...updatedToyData
+                    status: updatedToyData.status
                 }
             }
             const result = await toyCollection.updateOne(filter, updateDoc)
