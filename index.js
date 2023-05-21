@@ -35,44 +35,60 @@ async function run() {
         // })
 
         // post to toyDb
-        app.post('/allToys', async(req, res) =>{
+        app.post('/allToys', async (req, res) => {
             const newToy = req.body
             const result = await toyCollection.insertOne(newToy)
             res.send(result)
-            
+
         });
 
         // get from toyDB
-        app.get('/allToys', async(req, res) =>{
+        app.get('/allToys', async (req, res) => {
             const myToys = await toyCollection.find().toArray()
             res.send(myToys)
         })
 
         // get single Data
-        app.get('/allToys/:id', async(req, res) =>{
+        app.get('/allToys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await toyCollection.findOne(query)
             res.send(result)
+
         })
-        // delete from toyDB
-        app.delete('/allToys/:id', async(req, res) =>{
-          try{
-            const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
-            const result = await toyCollection.deleteOne(query)
+
+
+        // console.log(req.params.email)
+        // const result = await toyCollection.find({ seller_email: req.params.email}).toArray()
+        // res.send(result)
+
+        app.get("/myToys/:email", async (req, res) => {
+            let quary = {};
+            if (req.query?.email) {
+                quary = { seller_email: req.query.email }
+            }
+            const result = await toyCollection.find(quary).toArray()
             res.send(result)
-          }
-          catch(err){
-            res.send(err.massge)
-          }
+        })
+
+        // delete from toyDB
+        app.delete('/allToys/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) }
+                const result = await toyCollection.deleteOne(query)
+                res.send(result)
+            }
+            catch (err) {
+                res.send(err.massge)
+            }
         });
 
         // patch to toyDB
-        app.patch('/allToys/:id', async(req, res) =>{
+        app.patch('/allToys/:id', async (req, res) => {
             const id = res.params.id
             const updatedToyData = req.body
-            const filter = {_id : new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
                     ...updatedToyData
